@@ -1,142 +1,154 @@
 <html>
+<head>
+    <link rel="stylesheet" type="text/css" href="indexCSS.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="/RecordRTC.js"></script>
+    <script src="https://www.webrtc-experiment.com/common.js"></script>
+</head>
 
-<style>
-.buttons {
-  position: absolute;
-  z-index: 5;
-  bottom: 8px;
-}
-
-.myButton {
-    background-color:#FFFFFF;
-    border-radius:6px;
-    border:1px solid #000000;
-    display:inline-block;
-    cursor:pointer;
-    color:#000000;
-    font-family:Arial;
-    font-size:15px;
-    font-weight:bold;
-    padding:12px 44px;
-    text-decoration:none;
-    text-shadow:0px 1px 0px #0000000;
-}
-.myButton:hover:enabled {
-    background-color:#8B1515;
-    color:#FFFFFF;
-}
-.myButton:active {
-    position:relative;
-    top:1px;
-}
-
-.myButton:disabled {
-    color: #ECECEC;
-    pointer-events: none;
-}
-</style>
 <div class="buttons">
-<button id="btn-start-recording" class="myButton">Start Recording</button>
-<button id="btn-stop-recording" disabled class="myButton">Stop Recording</button>
+    <button id="btn-start-recording" class="myButton">Start Recording</button>
+    <button id="btn-stop-recording" disabled class="myButton">Stop Recording</button>
 </div>
-<style>
-.bottomright {
-  position: absolute;
-  bottom: 8px;
-  right: 16px;
-  font-size: 18px;
-  z-index: 4;
-}
-</style>
+
 <div class="bottomright">
-<video controls autoplay playsinline height="150"></video>
+    <video controls autoplay playsinline height="150"></video>
 </div>
 
-<script src="/RecordRTC.js"></script>
 <script>
-var video = document.querySelector('video');
 
-function captureCamera(callback) {
-    navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function(camera) {
-        callback(camera);
-    }).catch(function(error) {
-        alert('Unable to capture your camera. Please check console logs.');
-        console.error(error);
+    //BG Controls Dynamic
+    //var url = "https://www.youtube.com/embed/zofBinqC2F4?autoplay=1&mute=1"; //HEYAYAYAYEAYA
+    //var el = document.getElementById('bg1');
+    //el.src = url;
+
+    /*var urlArray = ["https://www.youtube.com/embed/zofBinqC2F4?autoplay=1&mute=1", 
+                    "https://www.youtube.com/embed/IvJQTWGP5Fg?autoplay=1&mute=1",
+                    "https://www.youtube.com/embed/JsB57FtaxXQ?autoplay=1&mute=1"];*/
+    //document.getElementById('bg1').src ="https://www.youtube.com/embed/zofBinqC2F4?autoplay=1&mute=1";
+
+    function iframeDidLoad() {
+        alert('Done');
+    }
+
+    function newSite() {
+        var sites = ['http://getprismatic.com',
+                    'http://gizmodo.com/',
+                    'http://lifehacker.com/']
+
+        document.getElementById('myIframe').src = sites[Math.floor(Math.random() * sites.length)];
+    }    
+
+
+    //$('#bg1').attr('src', "https://www.youtube.com/embed/zofBinqC2F4?autoplay=1&mute=1");
+
+    $( function() {
+        $( "#windowControl" ).draggable();
     });
-}
-
-function stopRecordingCallback() {
-    video.src = video.srcObject = null;
-    video.muted = false;
-    video.volume = 1;
-    video.src = URL.createObjectURL(recorder.getBlob());
+    //dragging 
     
-    recorder.camera.stop();
-    recorder.destroy();
-    recorder = null;
-}
 
-var recorder; // globally accessible
-
-document.getElementById('btn-start-recording').onclick = function() {
-    this.disabled = true;
-    captureCamera(function(camera) {
-        video.muted = true;
-        video.volume = 0;
-        video.srcObject = camera;
-
-        recorder = RecordRTC(camera, {
-            type: 'video'
-        });
-
-        recorder.startRecording();
-
-        // release camera on stopRecording
-        recorder.camera = camera;
-
-        document.getElementById('btn-stop-recording').disabled = false;
+    //BG controls
+    $(function(){
+        /*
+        setTimeout(function(){
+        $('#bg2').show();
+        },3000);
+        setTimeout(function(){
+        $('#bg1').hide();
+        },8000);
+        //have a transition function
+        */
     });
-};
 
-document.getElementById('btn-stop-recording').onclick = function() {
-    this.disabled = true;
-    recorder.stopRecording(stopRecordingCallback);
-};
+
+
+    //VIDEO
+        var video = document.querySelector('video');
+
+        function captureCamera(callback) {
+            navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(function(camera) {
+                callback(camera);
+            }).catch(function(error) {
+                alert('Unable to capture your camera. Please check console logs.');
+                console.error(error);
+            });
+        }
+
+        function stopRecordingCallback() {
+            video.src = video.srcObject = null;
+            video.muted = false;
+            video.volume = 1;
+            video.src = URL.createObjectURL(recorder.getBlob());
+            
+            recorder.camera.stop();
+            recorder.destroy();
+            recorder = null;
+        }
+
+        var recorder; // globally accessible
+
+        document.getElementById('btn-start-recording').onclick = function() {
+            this.disabled = true;
+            captureCamera(function(camera) {
+                video.muted = true;
+                video.volume = 0;
+                video.srcObject = camera;
+
+                recorder = RecordRTC(camera, {
+                    type: 'video'
+                });
+
+                recorder.startRecording();
+
+                // release camera on stopRecording
+                recorder.camera = camera;
+
+                document.getElementById('btn-stop-recording').disabled = false;
+            });
+        };
+
+        document.getElementById('btn-stop-recording').onclick = function() {
+        this.disabled = true;
+        recorder.stopRecording(stopRecordingCallback);
+    };
+
 </script>
 
 <body>
-<!-- Embedded Media Background -->
-<div style="display:block;position:absolute;top:0px;left:0px;z-index:0;">
-  <iframe width="1280" height="660" src="https://www.youtube.com/embed/zofBinqC2F4?autoplay=1&mute=1"
-  frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope;
-  picture-in-picture" allowfullscreen></iframe>
-</div>
-</div>
 
-<!-- Transparent Layer to Prevent Interacting with Media -->
-<style>
-    .dividingLayer {
-      height: 150vw;
-      width: 150vw;
-      background-color: #FFF;
-      opacity: 0;
-      position: absolute;
-      z-index: 1;
-      margin-left: -5vw;
-      margin-top: -5vw;
-    }
-</style>
-<div class="dividingLayer"></div>
+    <input type="button" value="Change site" onClick="newSite()" />
+    <iframe id="myIframe" src="http://getprismatic.com/" onLoad="iframeDidLoad();"></iframe>
 
-<!-- Qualtrics Survey -->
-<div style="display:block;position:absolute;top:80px;left:160px;z-index:2;">
-  <iframe src = "https://stanforduniversity.qualtrics.com/jfe/form/SV_41GXiV5cYShW6yh" width="960" height="495"  <! adjust survey dimensions here> ALLOWTRANSPARENCY="false"></iframe>
-</div>
 
+    <!--Availiable Backgrounds
+    <div class="bgdiv">
+        <iframe id="bg1" class="bgiframe" src="https://www.youtube.com/embed/JsB57FtaxXQ?autoplay=1&mute=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope;
+        picture-in-picture" allowfullscreen>> </iframe>
+        <iframe id="bg2" class="bgiframe" src="https://www.youtube.com/embed/IvJQTWGP5Fg?autoplay=1&mute=1&controls=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope;
+        picture-in-picture" allowfullscreen>> </iframe>
+
+        
+            
+            https://www.youtube.com/embed/zofBinqC2F4?autoplay=1&mute=1
+            https://www.youtube.com/embed/IvJQTWGP5Fg?autoplay=1&mute=1&controls=0
+            https://www.youtube.com/embed/JsB57FtaxXQ?autoplay=1&mute=1
+    </div>-->
+
+    <!-- Transparent Layer to Prevent Interacting with Media-->
+    <div class="dividingLayer"></div>
+
+    <!-- Qualtrics Survey -->
+    <div id="windowControl">
+        <div id="draggableh" >Click here to drag</div>
+        <iframe src = "https://stanforduniversity.qualtrics.com/jfe/form/SV_41GXiV5cYShW6yh" width="400" height="500" ALLOWTRANSPARENCY="false"></iframe>
+    <!-- orig: width="960" height="495" ALLOWTRANSPARENCY="false"-->
+    </div>
 </body>
 
+
+
 <footer style="margin-top: 20px;"><small id="send-message"></small></footer>
-<script src="https://www.webrtc-experiment.com/common.js"></script>
-
-
 </html>
