@@ -39,6 +39,7 @@ function stopRecordingCallback() {
 var recorder; // globally accessible
 
 document.getElementById('btn-start-recording').onclick = function() {
+    //change
     this.disabled = true;
     captureCamera(function(camera) {
         video.muted = true;
