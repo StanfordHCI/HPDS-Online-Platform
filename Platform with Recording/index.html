@@ -1,13 +1,13 @@
 <html>
 <head>
-    <link rel="stylesheet" type="text/css" href="indexCSS.css">
-    <script type="text/javascript" src="js_script.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <!--<script src="/RecordRTC.js"></script> --> 
+    <script src="/RecordRTC.js"></script> 
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script> <!--check-->
     <script src="https://www.webrtc-experiment.com/common.js"></script> <!--obsolete?-->
+    <script type="text/javascript" src="js_script.js"></script>
+    <link rel="stylesheet" type="text/css" href="indexCSS.css">
 </head>
 
 <body>
@@ -15,7 +15,7 @@
     <div class="buttonGen">
         <button id="btn-start-recording" class="buttons">Start Recording</button>
         <button id="btn-stop-recording" disabled class="buttons">Stop Recording</button>
-        <button id="btn-chng-bg" class="buttons" onClick="newBG()">Change Background*</button>
+        <button id="btn-chng-bg" class="buttons" onClick="newBG()">Change Background</button>
     </div>
     
     <!--Video Display-->
@@ -39,10 +39,6 @@
     <!-- orig: width="960" height="495" ALLOWTRANSPARENCY="false", 400, 500-->
     </div>
 </body>
-<script>
-$( function() {
-	$( "#surveyWindow").draggable();
-});
-</script>
+
 <footer style="margin-top: 20px;"><small id="send-message"></small></footer>
 </html>
