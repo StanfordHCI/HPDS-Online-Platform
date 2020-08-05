@@ -1,10 +1,10 @@
-.buttons {
+.buttonGen {
     position: absolute;
     z-index: 5;
     bottom: 8px;
   }
   
-.myButton {
+.buttons {
     background-color:#FFFFFF;
     border-radius:6px;
     border:1px solid #000000;
@@ -18,16 +18,16 @@
     text-decoration:none;
 }
 
-.myButton:hover:enabled {
+.buttons:hover:enabled {
     background-color:#8B1515;
     color:#FFFFFF;
 }
-.myButton:active {
+.buttons:active {
     position:relative;
     top:1px;
 }
 
-.myButton:disabled {
+.buttons:disabled {
     color: #ECECEC;
     pointer-events: none;
 }
@@ -41,8 +41,8 @@
 }
 
 .dividingLayer {
-    height: 150vw;
-    width: 150vw;
+    height: 60vw;
+    width: 100vw;
     background-color: #FFF;
     opacity: 0;
     position: absolute;
@@ -60,11 +60,11 @@
 }
 
 .bgiframe {
-    width:1280;
-    height:660;
+    width:1200;
+    height:550;
 }
 
-#windowControl {
+#surveyWindow {
     display:block;
     position:absolute;
     top:80px;
@@ -72,10 +72,11 @@
     z-index:2;
 }
   
-#draggableh {
-    padding: 10px;
+#surveyNavbar {
+    background: #ccc;
+    border: 1px solid #000;
+    border-radius: 4px;
+    height: 23px;
+    margin-bottom: -3px;
     cursor: move;
-    z-index: 3;
-    background-color: #2196F3;
-    color: #fff;
 }
