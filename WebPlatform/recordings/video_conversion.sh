@@ -1,11 +1,15 @@
 # This script combines all of the audio and video mjr file pairs in the current
 # directory and converts them into mp4 files. If the script is run with the -a, -A, or -all flag
 # a file with the current date and time is created inside the full-conversions  directory. Within this
-# sub-directory, a directory is created for each for each audio/video pair that contains
+# sub-directory, a directory is created for each audio/video pair that contains
 # the final combined mp4 along with all of the intermediate versions of the audio and video
 # files. Otherwise, only previously unprocessed recordings are converted and added to the 
-# processed recordings directory
+# processed recordings directory.
 
+#Last updated: 08/28/2020, Isaac Bevers
+
+#janus-pp-rec is a utility provided with Janus for converting .mjr files "meetecho Janus recordings"
+#i.e. RTP packet dumps to playable audio and video
 pathToPpRec=/Users/isaacbevers/janus-gateway/janus-pp-rec
  
 main () {
@@ -17,6 +21,8 @@ main () {
 	fi
 }
 
+#Converts all of the .mjr file names from the default, which is something of the form "rec-8486469763877175"
+#to whatever name was entered by the user, as specified in the .nfo file associated with the recording.
 convert_names () {
 	for file in * ; do #for each file in the directory
 		local fileExtension="${file##*.}" #gets the characters after the last . in the directory e.g. "mjr"
@@ -28,13 +34,14 @@ convert_names () {
 			local IDPrefix="${fileID#rec-*}" #The ID number of the file e.g. "8486469763877175"
 			local nfo2ndLine=$(sed -n 2p "${IDPrefix}.nfo") #The second line of the .nfo file for a given prefix 
 			local fileID="${nfo2ndLine##* }" #The file name input by the user e.g. "test1"
-			local fileID=$(echo "${fileID}" | tr -d '[:cntrl:]')
+			local fileID=$(echo "${fileID}" | tr -d '[:cntrl:]') #Gets rid of unprintable characters in fileID
 			local newFileName="${fileID}-${fileType}.mjr"
 			eval "mv ${file} ${newFileName}"
 		fi
 	done
 }
 
+#Handles the control flow for processing the files regardless of whether the -all flag was set.
 process_recordings () {
 	local processingApproach="$1"	
 	local processedFiles=() #stores the names of the files that have been processed
@@ -49,11 +56,11 @@ process_recordings () {
 			else
 				process_lazy "${fileID}" "${file}"
 			fi
-
 		fi
 	done
 }
 
+#Handles the processing of a single recording when the all flag has been set.
 process_all_recordings () {
 	local fileID="$1"
 	local file="$2"
@@ -63,6 +70,9 @@ process_all_recordings () {
 	process_one_recording "${recordingDirectory}" "${file}" "${fileID}"
 }
 
+#Handles the processing of a single recording when the all flag has not been set.
+#Uses the process_recordings.txt to determine which files have been processed 
+#already.
 process_lazy () {
 	local fileID="$1"
 	local file="$2"
@@ -77,6 +87,11 @@ process_lazy () {
 	echo "${fileID}" >> processed_recordings.txt
 }
 
+#Processes one recording. Produces: (1) a .opus version of the audio, (2) a
+#.wav version of the audio, (3) a .webm version of the video without audio,
+#(4) a .mp4 version of the video without audio, and (5) a .mp4 version of the
+#video and audio combined. All of the conversions except the conversions from
+#.mjr use the ffmpeg utility.
 process_one_recording () {
 	local recordingDirectory="$1"
 	local file="$2"
@@ -98,4 +113,5 @@ process_one_recording () {
         eval "ffmpeg -i ${recordingDirectory}/${fileVideoID}.mp4 -i \
         	${recordingDirectory}/${fileAudioID}.wav -c:v copy -c:a aac ${recordingDirectory}/${fileID}-final.mp4"	
 }
-main "$@"
+
+main "$1" #Calls the main function and passes the first command-line arguments as parameters
