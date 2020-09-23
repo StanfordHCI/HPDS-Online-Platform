@@ -58,10 +58,18 @@ html, body {
   }
 
   #vidcontainer {
-    display:block;
-    position:fixed;
-    bottom:0;
-    right:0;
-    margin:auto;
-    z-index:3;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    z-index: 3;
+  }
+
+  #videoElement {
+    -moz-transform: scale(-1, 1);
+    -webkit-transform: scale(-1, 1);
+    -o-transform: scale(-1, 1);
+    -ms-transform: scale(-1, 1);
+    transform: scale(-1, 1);
   }
