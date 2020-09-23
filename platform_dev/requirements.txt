@@ -1,0 +1,4 @@
+Flask==1.1.1
+Flask-SocketIO==4.2.1
+numpy==1.19.1
+Pillow==7.2.0
