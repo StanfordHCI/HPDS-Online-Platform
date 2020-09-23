@@ -1,0 +1,167 @@
+<html>
+ <head>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ </head>
+
+  <style>
+   html, body {margin: 0; height: 100%; overflow: hidden; background-color:black;}
+
+  </style>
+
+  <body>
+ <!-- Embedded Media Background -->
+ <div id="atmosphere" style="display:none">
+   <div style="position:absolute;width:100%;height:100%;z-index:0;">
+       <iframe width="100%" height="100%" src="https://www.youtube.com/embed/VXPXkAhB6ek?autoplay=1&mute=1&controls=0"
+       frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope;
+       picture-in-picture"></iframe>
+   </div>
+ </div>
+ <!-- Transparent Layer to Prevent Interacting with Media -->
+ <style>
+     .dividingLayer {
+       height: 100vw;
+       width: 100vw;
+       background-color: #FFF;
+       opacity: 0;
+       position: absolute;
+       z-index: 1;
+       margin-left: 0vw;
+       margin-top: 0vw;
+     }
+ </style>
+ <div class="dividingLayer"></div>
+
+  <!-- Instructions to Participant to Take In Environment -->
+ <div id="instructions" style="position:absolute;z-index:3;top:40%;left:9%;">
+   <b style="color:white;font-size:60px;font-family:arial">
+     Observe the environment on your screen.
+
+    </b>
+ </div>
+
+  <!-- Qualtrics Survey -->
+ <div id="surveytask" style="display:none">
+   <div style="display:block;position:absolute;margin:auto;top:10%;left:30%;z-index:2;">
+     <iframe src = "https://stanforduniversity.qualtrics.com/jfe/form/SV_5hBjuoHD7q3Yxtb" width="550vw" height="550vh" ALLOWTRANSPARENCY="false"></iframe>
+   </div>
+ </div>
+
+  <!-- Video Recorder -->
+  <div id="recorder" style="display:none">
+    <div id="vidcontainer" style="display:block;position:fixed;bottom:0;right:0;margin:auto;z-index:3;">
+        <canvas id="canvasOutput"></canvas>
+        <video autoplay="true" id="videoElement"></video>
+    </div>
+    
+    <div class = 'video'>
+        <img id="image">
+    </div>
+  </div>
+
+  <!-- Scripts -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" type="text/javascript" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+<script src="https://docs.opencv.org/master/opencv.js" type="text/javascript"></script>
+  <script>
+ // After 5 seconds, hide the instructions text
+ $(function(){
+    setTimeout(function(){
+      $('#instructions').hide();
+    },5000);
+ });
+
+  // Also after 5 seconds, show the atmosphere
+ $(function(){
+    setTimeout(function(){
+      $('#atmosphere').show();
+    },5000);
+ });
+
+  // After 15 seconds, show the survey
+ $(function(){
+    setTimeout(function(){
+      $('#surveytask').show();
+      $('#recorder').show();
+    },6000);
+ });
+
+    function capture(video, scaleFactor) {
+        // Given a video and a scale factor, return a canvus with the video
+        // frame displayed on it.
+        if(scaleFactor == null){
+            scaleFactor = 1;
+        }
+        var w = video.videoWidth * scaleFactor;
+        var h = video.videoHeight * scaleFactor;
+        var canvas = document.createElement('canvas');
+            canvas.width  = w;
+            canvas.height = h;
+        var ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, w, h);
+        return canvas;
+    } 
+
+
+    cv['onRuntimeInitialized']=()=>{
+        // Wait for the CV module to initialize
+        var socket = io('http://localhost:5000');
+
+        socket.on('connect', function(){
+            // Log connection to the socket on the backend
+            if (socket.connected) {
+                console.log("Connection to backend socket: SUCCESS")
+            }
+            else {
+                console.log("Connection to backend socket: FAIL")
+            }
+        });
+
+        const video = document.querySelector("#videoElement");
+
+        video.width = 500; 
+        video.height = 375;
+
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(function (err0r) {
+                console.log(err0r)
+                console.log("Something went wrong!");
+            });
+        }
+
+        let src = new cv.Mat(video.height, video.width, cv.CV_8UC4);
+        let dst = new cv.Mat(video.height, video.width, cv.CV_8UC1);
+        let cap = new cv.VideoCapture(video);
+
+        const FPS = 22;
+
+        setInterval(() => {
+            // Every interval (FPS times per second), create the canvas, encode
+            // the frame into bytes, and send the bytes to the image socket.
+            cap.read(src);
+
+            var type = "image/png"
+
+            var video_element = document.getElementById("videoElement")
+            var frame = capture(video_element, 1)
+            var data = frame.toDataURL(type);
+
+            socket.emit('image', data);
+        }, 10000/FPS);
+
+
+        socket.on('response_back', function(image){
+            // Optionally do something with the response
+        });
+    }
+
+ </script>
+
+  </body>
+
+  </html> 
