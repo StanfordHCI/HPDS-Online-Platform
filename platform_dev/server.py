@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import base64
 import io
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import numpy as np
 
 app = Flask(__name__)
@@ -19,8 +19,11 @@ def image(data_image):
     headers, image = data_image.split(',', 1) 
     image = io.BytesIO(base64.b64decode(image))
     im = Image.open(image)
-    im = im.convert('RGB')
-    print(np.linalg.norm(np.asarray(im)))
+    try:
+        im = im.convert('RGB')
+        print(np.linalg.norm(np.asarray(im)))
+    except UnidentifiedImageError:
+        pass
 
 
     # Optionally emit a response back; here, we've just used the empty string

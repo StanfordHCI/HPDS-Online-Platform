@@ -1,0 +1,67 @@
+
+html, body {
+    margin: 0; 
+    height: 100%; 
+    overflow: hidden; 
+    background-color:black;
+}
+
+#atmosphere {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+#dividingLayer {
+    height: 100vw;
+    width: 100vw;
+    background-color: #FFF;
+    opacity: 0;
+    position: absolute;
+    z-index: 1;
+    margin-left: 0vw;
+    margin-top: 0vw;
+  }
+
+  #instructions {
+    position: absolute;
+    z-index: 3;
+    top: 40%;
+    left: 9%;
+  }
+
+  #instructions_background {
+    height: 100vw;
+    width: 100vw;
+    background-color: #000;
+    position: absolute;
+    z-index: 1;
+    margin-left: 0vw;
+    margin-top: 0vw;
+  }
+
+  #instructions_text {
+    color: white;
+    font-size: 60px;
+    font-family: arial;
+    font-weight: bold;
+  }
+
+  #surveytask {
+    display: block;
+    position: absolute;
+    margin: auto;
+    top: 10%;
+    left: 30%;
+    z-index: 2;
+  }
+
+  #vidcontainer {
+    display:block;
+    position:fixed;
+    bottom:0;
+    right:0;
+    margin:auto;
+    z-index:3;
+  }
