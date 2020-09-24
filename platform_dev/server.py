@@ -4,9 +4,15 @@ import base64
 import io
 from PIL import Image, UnidentifiedImageError
 import numpy as np
+import datetime
+from engineio.payload import Payload
+
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+# Avoid pesky "too many packets" error
+Payload.max_decode_packets = 500
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -21,9 +27,9 @@ def image(data_image):
     im = Image.open(image)
     try:
         im = im.convert('RGB')
-        print(np.linalg.norm(np.asarray(im)))
+        print(datetime.datetime.now())
     except UnidentifiedImageError:
-        pass
+        print("Error receiving")
 
 
     # Optionally emit a response back; here, we've just used the empty string
